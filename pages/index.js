@@ -9,6 +9,7 @@ export default function Home() {
 
   const [userInput, setUserInput] = useState("");
   const [history, setHistory] = useState([]);
+  const [loadedValue, setloadedValue] = useState("aaa");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState([
     {
@@ -37,7 +38,20 @@ export default function Home() {
     setLoading(false);
     setUserInput("");
   }
+//Handle form loading
+const handleLoad= async ()=>{
+  console.log('load clicked');
+  const response = await fetch("http://localhost:5000/load", {
+    method: "POST",
+    headers: {
+    },
+    //body: JSON.stringify({ question: userInput, history: history }),
+  }); 
+// console.log(response.json())
+// setloadedValue(lui)
+console.log(response.body.getReader)
 
+}
   // Handle form submission
   const handleSubmit = async(e) => {
     e.preventDefault();
@@ -98,14 +112,14 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>LangChain Chat</title>
-        <meta name="description" content="LangChain documentation chatbot" />
+        <title>Talking to CV's</title>
+        <meta name="description" content="Talking to CV's" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={styles.topnav}>
       <div className = {styles.navlogo}>
-    <a href="/">LangChain</a>
+    <a href="/">Talking to CV's {loadedValue}</a>
     </div>
     <div className = {styles.navlinks}>
     <a href="https://langchain.readthedocs.io/en/latest/" target="_blank">Docs</a>
@@ -113,6 +127,10 @@ export default function Home() {
     </div>
 </div>
       <main className={styles.main}>
+        <div className={styles.abcd}>
+        <div className={styles.load}>
+          <button onClick={handleLoad}>aaa</button>
+        </div>
       <div className = {styles.cloud}>
         <div ref={messageListRef} className = {styles.messagelist}>
         {messages.map((message, index) => {
@@ -129,6 +147,7 @@ export default function Home() {
           )
         })}
         </div>
+            </div>
             </div>
            <div className={styles.center}>
             
@@ -162,9 +181,7 @@ export default function Home() {
             </button>
             </form>
             </div>
-            <div className = {styles.footer}>
-            <p>Powered by <a href = "https://github.com/hwchase17/langchain" target="_blank">LangChain</a>. Built by <a href="https://twitter.com/chillzaza_" target="_blank">Zahid</a>.</p>
-            </div>
+            
         </div>
       </main>
     </>

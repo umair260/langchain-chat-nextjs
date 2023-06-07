@@ -1,6 +1,7 @@
 export default async function (req, res) {
 
   const response = await fetch(process.env.LCC_ENDPOINT_URL, {
+    
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -13,6 +14,5 @@ export default async function (req, res) {
   });
 
     const data = await response.json();
-
-    res.status(200).json({ result: data })
+    res.status(200).json({ result: "data" })
 }
