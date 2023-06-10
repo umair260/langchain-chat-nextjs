@@ -1,18 +1,27 @@
+import * as dotenv from "dotenv";
+import { OpenAI } from "langchain/llms/openai";
+import { RetrievalQAChain } from "langchain/chains";
+import { HNSWLib } from "langchain/vectorstores/hnswlib";
+import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import * as fs from "fs";
+dotenv.config();
 export default async function (req, res) {
+  const model = new OpenAI({});
 
-  const response = await fetch(process.env.LCC_ENDPOINT_URL, {
-    
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Api-Key": process.env.LCC_TOKEN
-    },
-    body: JSON.stringify({
-      question: req.body.question,
-      history: req.body.history
-    }),
+const text=req.body.loadedData;
+const userInput= req.body.userInput;
+const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000 });
+const docs = await textSplitter.createDocuments([text]);
+
+  // Create a vector store from the documents.
+const vectorStore = await HNSWLib.fromDocuments(docs, new OpenAIEmbeddings());
+
+  // Create a chain that uses the OpenAI LLM and HNSWLib vector store.
+  const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
+  const ress = await chain.call({
+    query: userInput,
   });
-
-    const data = await response.json();
-    res.status(200).json({ result: "data" })
+  // console.log(ress);
+res.send(ress);
 }

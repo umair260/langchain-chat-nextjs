@@ -4,13 +4,14 @@ import styles from '../styles/Home.module.css'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import CircularProgress from '@mui/material/CircularProgress';
-
+import axios from 'axios'
 export default function Home() {
 
   const [userInput, setUserInput] = useState("");
   const [history, setHistory] = useState([]);
   const [loadedValue, setloadedValue] = useState("aaa");
   const [loading, setLoading] = useState(false);
+  const [loadedData, setloadedData]= useState("default");
   const [messages, setMessages] = useState([
     {
       "message": "Hi there! How can I help?",
@@ -39,20 +40,14 @@ export default function Home() {
     setUserInput("");
   }
 //Handle form loading
-const handleLoad= async ()=>{
-  console.log('load clicked');
-  const response = await fetch("http://localhost:5000/load", {
-    method: "POST",
-    headers: {
-    },
-    //body: JSON.stringify({ question: userInput, history: history }),
-  }); 
-// console.log(response.json())
-// setloadedValue(lui)
-console.log(response.body.getReader)
+const handleLoad= async (e)=>{ 
+  console.log('clicked')
+ const response = await axios.get('/api/load/');
+//  console.log(response.data)
+ setloadedData(response.data);
+
 
 }
-  // Handle form submission
   const handleSubmit = async(e) => {
     e.preventDefault();
 
@@ -62,32 +57,76 @@ console.log(response.body.getReader)
 
     setLoading(true);
     setMessages((prevMessages) => [...prevMessages, { "message": userInput, "type": "userMessage" }]);
-
+  
     // Send user question and history to API
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ question: userInput, history: history }),
-    });
+    //const response = await axios.get('/api/chat/');
 
-    if (!response.ok) {
-      handleError();
-      return;
-  }
+  const resss= await axios({
+    method: 'post',
+    url: '/api/chat/',
+    data: {
+      loadedData,
+      userInput,
+    }
+    });
+    console.log(resss.data.text)
+    setMessages((prevMessages) => [...prevMessages, { "message": resss.data.text, "type": "apiMessage" }]);
+      setLoading(false);
+      setUserInput("");
+    return;
+//     const dat = await axios.get('/api/chat/', {
+//       loadedData:loadedData
+//     });
+   
+//     const jj= dat.data.data;
+//     console.log(jj.search_metadata.created_at)
+//    // return;
+//     setMessages((prevMessages) => [...prevMessages, { "message": jj.search_metadata.created_at, "type": "apiMessage" }]);
+//     setLoading(false);
+// }
+// catch(err){
+// console.log(err)}
+    // const datee= jj.data.search_metadata.created_at;
+    // console.log(datee)
+    // axios.get('/api/chat/').then(function (response) {
+    //   // handle success
+    //   const dat= response.data;
+    //   console.log('A')
+    //   console.log(dat.data.search_metadata.created_at)
+      
+    // })
+    // .catch(function (error) {
+    //   // handle error
+    //   console.log(error);
+    // })
+    // return;
+    
+    // .then(function (response) {
+    //   // handle success
+    //   console.log(response.data);
+    // })
+    // .catch(function (error) {
+    //   // handle error
+    //   console.log(error);
+    // })
+    // console.log(response.data)
+
+  //   if (!response.ok) {
+  //     handleError();
+  //     return;
+  // }
 
     // Reset user input
     setUserInput("");
-    const data = await response.json();
+    // const data = await response.json();
 
-    if (data.result.error === "Unauthorized") {
-      handleError();
-      return;
-    }
+    // if (data.result.error === "Unauthorized") {
+    //   handleError();
+    //   return;
+    // }
 
-    setMessages((prevMessages) => [...prevMessages, { "message": data.result.success, "type": "apiMessage" }]);
-    setLoading(false);
+    // setMessages((prevMessages) => [...prevMessages, { "message": data.result.success, "type": "apiMessage" }]);
+    // setLoading(false);
     
   };
 

@@ -1,22 +1,16 @@
+import { DirectoryLoader } from "langchain/document_loaders";
+import { TextLoader, PDFLoader } from "langchain/document_loaders";
+
 export default async function (req, res) {
-const endpoint= 'http://localhost:5000/load';
-
-    // const response = await fetch(endpoint, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-      
-      
-    // });
-   // res.stringify
-
-   fetch(endpoint,{
-method:"POST"})
-  .then(response => console.log(response.json()))
-  .catch(error => console.error('Error:', error));
-  res.send({'A':"re"})
-//    console.log('UUU')
-//    console.log(response.json())
-//      res.send(response);
+   const  loader = await new DirectoryLoader("docs",{
+    ".txt": (path) => new TextLoader(path),
+     ".pdf": (path) => new PDFLoader(path, "text"),
+  });
+  const docsStored= await loader.load();
+  // console.log(docsStored)
+  let arr='';
+  await docsStored.forEach(element => {
+    arr+= element.pageContent;
+  });
+  res.send(arr)
   }
