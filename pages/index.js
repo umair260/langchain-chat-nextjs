@@ -46,7 +46,9 @@ export default function Home() {
 
 //Handle form loading
 const handleLoad= async (e)=>{ 
+
   setLoadingLoad(true);
+  
  const response = await axios.get('/api/load/');
 //  console.log(response.data)
  setloadedData(response.data.arr);
@@ -83,6 +85,7 @@ const handleLoad= async (e)=>{
       
     return;    
   };
+ 
   // Prevent blank submissions and allow for multiline input
   const handleEnter = (e) => {
     if (e.key === "Enter" && userInput) {
@@ -123,7 +126,7 @@ const handleLoad= async (e)=>{
       </Head>
       <div className={styles.topnav}>
       <div className = {styles.navlogo}>
-    <a href="/">Talking to CV's</a>
+    <a href="/">Talking to Documents</a>
     </div>
     
 </div>
@@ -140,6 +143,7 @@ const handleLoad= async (e)=>{
         {/* <button className={styles.loadButton} onClick={ () => { fileInput.current.click(); handleFolderSelect(); console.log('s')} }>Choose Directory</button>
           <button className={styles.loadButton} onClick={handleFolderSelect}>Upload Files</button> */}
       <button className={styles.loadButton} onClick={handleLoad}>
+
       {loadingLoad ? <div className={styles.loadprogress} ><CircularProgress size={15}/> </div> : 'Load' }
 
       </button>
@@ -151,7 +155,7 @@ const handleLoad= async (e)=>{
             // The latest message sent by the user will be animated while waiting for a response
               <div key = {index} className = {message.type === "userMessage" && loading && index === messages.length - 1  ? styles.usermessagewaiting : message.type === "apiMessage" ? styles.apimessage : styles.usermessage}>
                 {/* Display the correct icon depending on the message type */}
-                {message.type === "apiMessage" ? <Image src = "/cbsol-logo.jpg" alt = "AI" width = "30" height = "30" className = {styles.boticon} priority = {true} /> : <Image src = "/usericon.png" alt = "Me" width = "30" height = "30" className = {styles.usericon} priority = {true} />}
+                {message.type === "apiMessage" ? <Image src = "/chatgpt.jpeg" alt = "AI" width = "30" height = "30" className = {styles.boticon} priority = {true} /> : <Image src = "/cbsol.png" alt = "Me" width = "30" height = "30" className = {styles.usericon} priority = {true} />}
               <div className = {styles.markdownanswer}>
                 {/* Messages are being rendered in Markdown format */}
                 <ReactMarkdown linkTarget = {"_blank"}>{message.message}</ReactMarkdown>
