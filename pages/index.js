@@ -120,7 +120,7 @@ const handleLoad= async (e)=>{
     <>
       <Head>
         <title>Talking to CV's</title>
-        <meta name="description" content="Talking to CV's" />
+        <meta name="description" content="Talking to the CV's" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/cbsol.png" />
       </Head>
