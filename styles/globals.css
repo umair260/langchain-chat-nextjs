@@ -26,8 +26,3 @@ a {
 a:hover {
   opacity: 0.8;
 }
-
-ul li {
-  counter-increment: item;  /* Increment the counter */
-  margin-bottom: 5px;
-}

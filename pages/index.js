@@ -5,10 +5,8 @@ import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios'
-
 export default function Home() {
 
-  const fileInput = useRef();
   const [userInput, setUserInput] = useState("");
   const [history, setHistory] = useState([]);
   const [loadedValue, setloadedValue] = useState("aaa");
@@ -41,20 +39,13 @@ export default function Home() {
     setLoading(false);
     setUserInput("");
   }
-
-  const [loadingLoad, setLoadingLoad] = useState(false);
-
 //Handle form loading
 const handleLoad= async (e)=>{ 
-
-  setLoadingLoad(true);
-  
+  console.log('clicked')
  const response = await axios.get('/api/load/');
 //  console.log(response.data)
- setloadedData(response.data.arr);
- console.log(response.data.arr)
- setLoadingLoad(false);
- setfile(response.data.arre)
+ setloadedData(response.data);
+
 
 }
   const handleSubmit = async(e) => {
@@ -82,10 +73,63 @@ const handleLoad= async (e)=>{
     setMessages((prevMessages) => [...prevMessages, { "message": resss.data.text, "type": "apiMessage" }]);
       setLoading(false);
       setUserInput("");
+    return;
+//     const dat = await axios.get('/api/chat/', {
+//       loadedData:loadedData
+//     });
+   
+//     const jj= dat.data.data;
+//     console.log(jj.search_metadata.created_at)
+//    // return;
+//     setMessages((prevMessages) => [...prevMessages, { "message": jj.search_metadata.created_at, "type": "apiMessage" }]);
+//     setLoading(false);
+// }
+// catch(err){
+// console.log(err)}
+    // const datee= jj.data.search_metadata.created_at;
+    // console.log(datee)
+    // axios.get('/api/chat/').then(function (response) {
+    //   // handle success
+    //   const dat= response.data;
+    //   console.log('A')
+    //   console.log(dat.data.search_metadata.created_at)
       
-    return;    
+    // })
+    // .catch(function (error) {
+    //   // handle error
+    //   console.log(error);
+    // })
+    // return;
+    
+    // .then(function (response) {
+    //   // handle success
+    //   console.log(response.data);
+    // })
+    // .catch(function (error) {
+    //   // handle error
+    //   console.log(error);
+    // })
+    // console.log(response.data)
+
+  //   if (!response.ok) {
+  //     handleError();
+  //     return;
+  // }
+
+    // Reset user input
+    setUserInput("");
+    // const data = await response.json();
+
+    // if (data.result.error === "Unauthorized") {
+    //   handleError();
+    //   return;
+    // }
+
+    // setMessages((prevMessages) => [...prevMessages, { "message": data.result.success, "type": "apiMessage" }]);
+    // setLoading(false);
+    
   };
- 
+
   // Prevent blank submissions and allow for multiline input
   const handleEnter = (e) => {
     if (e.key === "Enter" && userInput) {
@@ -95,26 +139,14 @@ const handleLoad= async (e)=>{
     } else if (e.key === "Enter") {
       e.preventDefault();
     }
-    
   };
-  const [file, setfile] = useState([]);
-  const handleFolderSelect= async (e)=>{
-    // await fileInput.current.click();
-    // console.log(fileInput)
-    const files = fileInput.current.files;
-    for(let i = 0; i < files.length; i++) {
-      setfile(prevItems => [...prevItems,files[i].name ])
-     
-    }
-  }
-
 
   // Keep history in sync with messages
   useEffect(() => {
     if (messages.length >= 3) {
       setHistory([[messages[messages.length - 2].message, messages[messages.length - 1].message]]);
     }
-    }, [messages, file])
+    }, [messages])
 
   return (
     <>
@@ -122,31 +154,21 @@ const handleLoad= async (e)=>{
         <title>Talking to CV's</title>
         <meta name="description" content="Talking to the CV's" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/cbsol.png" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={styles.topnav}>
       <div className = {styles.navlogo}>
-    <a href="/">Talking to Documents</a>
+    <a href="/">Talking to CV's {loadedValue}</a>
     </div>
-    
+    <div className = {styles.navlinks}>
+    <a href="https://langchain.readthedocs.io/en/latest/" target="_blank">Docs</a>
+    <a href="https://github.com/zahidkhawaja/langchain-chat-nextjs" target="_blank">GitHub</a>
+    </div>
 </div>
       <main className={styles.main}>
         <div className={styles.abcd}>
         <div className={styles.load}>
-        {file.length!=0 ? <ul className={styles.arrlist}>
-            {Array.isArray(file) && file.map((item, index) => <li key={index}>{index+1}- {item}</li>)}
-      </ul>: <div style={{marginTop:'30px'}}>
-        No Data set Selected
-      </div>
-        }
-        {/* <input style={{display:'none'}} type="file" directory="" webkitdirectory="" ref={fileInput} /> */}
-        {/* <button className={styles.loadButton} onClick={ () => { fileInput.current.click(); handleFolderSelect(); console.log('s')} }>Choose Directory</button>
-          <button className={styles.loadButton} onClick={handleFolderSelect}>Upload Files</button> */}
-      <button className={styles.loadButton} onClick={handleLoad}>
-
-      {loadingLoad ? <div className={styles.loadprogress} ><CircularProgress size={15}/> </div> : 'Load' }
-
-      </button>
+          <button onClick={handleLoad}>aaa</button>
         </div>
       <div className = {styles.cloud}>
         <div ref={messageListRef} className = {styles.messagelist}>
@@ -155,7 +177,7 @@ const handleLoad= async (e)=>{
             // The latest message sent by the user will be animated while waiting for a response
               <div key = {index} className = {message.type === "userMessage" && loading && index === messages.length - 1  ? styles.usermessagewaiting : message.type === "apiMessage" ? styles.apimessage : styles.usermessage}>
                 {/* Display the correct icon depending on the message type */}
-                {message.type === "apiMessage" ? <Image src = "/chatgpt.jpeg" alt = "AI" width = "30" height = "30" className = {styles.boticon} priority = {true} /> : <Image src = "/cbsol.png" alt = "Me" width = "30" height = "30" className = {styles.usericon} priority = {true} />}
+                {message.type === "apiMessage" ? <Image src = "/parroticon.png" alt = "AI" width = "30" height = "30" className = {styles.boticon} priority = {true} /> : <Image src = "/usericon.png" alt = "Me" width = "30" height = "30" className = {styles.usericon} priority = {true} />}
               <div className = {styles.markdownanswer}>
                 {/* Messages are being rendered in Markdown format */}
                 <ReactMarkdown linkTarget = {"_blank"}>{message.message}</ReactMarkdown>
